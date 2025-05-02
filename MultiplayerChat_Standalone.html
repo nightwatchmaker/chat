@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Multiplayer Chat</title>
+    <script src="https://unpkg.com/scratch-vm@0.2.0/dist/web/scratch-vm.js"></script>
+    <script src="https://unpkg.com/scratch-render@0.2.0/dist/web/scratch-render.js"></script>
+    <script src="https://unpkg.com/scratch-storage@0.2.0/dist/web/scratch-storage.js"></script>
+    <script src="https://unpkg.com/scratch-audio@0.2.0/dist/web/scratch-audio.js"></script>
+    <script src="https://unpkg.com/scratch-svg-renderer@0.2.0/dist/web/scratch-svg-renderer.js"></script>
+    <script src="https://unpkg.com/scratch-parser@0.2.0/dist/web/scratch-parser.js"></script>
+    <script src="https://unpkg.com/scratch-gui@0.2.0/build/bundle.js"></script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      #scratch-stage {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scratch-stage"></div>
+    <script>
+      const vm = new window.VirtualMachine();
+      const canvas = document.createElement("canvas");
+      canvas.width = 480;
+      canvas.height = 360;
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      document.getElementById("scratch-stage").appendChild(canvas);
+
+      const renderer = new window.RenderWebGL(canvas);
+      vm.attachRenderer(renderer);
+
+      const audioEngine = new window.AudioEngine();
+      vm.attachAudioEngine(audioEngine);
+
+      const storage = new window.ScratchStorage();
+      storage.addWebSource(
+        [storage.AssetType.Project],
+        (asset) => "MultiplayerChat.sb3"
+      );
+      vm.attachStorage(storage);
+
+      fetch("MultiplayerChat.sb3")
+        .then(r => r.arrayBuffer())
+        .then(buffer => vm.loadProject(buffer))
+        .then(() => vm.start());
+
+    </script>
+  </body>
+</html>
